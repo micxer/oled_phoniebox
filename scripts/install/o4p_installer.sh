@@ -217,57 +217,9 @@ echo -e "${GREEN}done${NOCOLOR}"
 echo -e ""
 echo -e "Install packages..."
 
-lineLen=24
-packages=(git python3 build-essential python3-dev python3-pip python-pil libjpeg-dev i2c-tools) # python3-smbus i2c-tools  libfreetype6-dev   python3-pygame libtiff5)
-for p in ${packages[@]}; do
-	i=0
-	echo -n -e "   --> $p:"
-    let lLen="$lineLen"-"${#p}"
-    while [ "$i" -lt "$lLen" ]
-    do
-		let i+=1
-		echo -n -e " "
-	done
-    installer=`sudo dpkg -s ${p}  2>&1 | grep Status | grep installed`
-    if [ "$installer" = "" ]
-    then
-		installer=`sudo apt -qq -y install ${p} > /dev/null 2>&1`
-		installer=`sudo dpkg -s ${p} 2>&1 | grep Status | grep installed`
-		if [ "$installer" = "" ]
-		then
-			echo -e "${RED}failed${NOCOLOR}"
-		else
-			echo -e "${GREEN}done${NOCOLOR}"
-		fi
-	else
-		echo -e "${GREEN}already installed${NOCOLOR}"
-	fi
-done
-lumaPackages=(luma.core luma.oled netifaces)
-for p in ${lumaPackages[@]}; do
-	i=0
-	let lLen="$lineLen"-"${#p}"
-	echo -n -e "   --> $p:"
-	while [ "$i" -lt "$lLen" ]
-	do
-		let i+=1
-		echo -n -e " "
-	done
-	pipInstalled=`sudo pip3 show ${p}`
-	if [ "$pipInstalled" = "" ]
-	then
-		sudo pip3 install ${p}  > /dev/null 2>&1
-		pipInstalled=`sudo pip3 show ${p}`
-		if [ "$pipInstalled" = "" ]
-		then
-			echo -e "${RED}failed${NOCOLOR}"
-		else
-			echo -e "${GREEN}done${NOCOLOR}"
-		fi
-	else
-		echo -e "${GREEN}already installed${NOCOLOR}"
-	fi
-done
+sudo apt-get -qq --yes install git python3 build-essential python3-dev python3-pip python-pil libjpeg-dev i2c-tools
+sudo pip3 install luma.core luma.oled netifaces
+
 echo -e ""
 echo -e "Enable I2C..."
 if grep -q 'i2c-bcm2708' /etc/modules; then
